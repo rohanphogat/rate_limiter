@@ -4,14 +4,14 @@ RSpec.describe ApiThrottleService::RateLimiter, type: :service do
 
   describe 'validate_request' do
 
-    context 'config : time_window = 3600, requests_per_window = 100, min_time_bucket_size = 1' do
+    context 'config : time_window = 3600, requests_per_window = 100, min_time_slot_size = 1' do
     #calculated rate limit 1 request every 36 seconds
     before(:each) do
       $redis.flushdb
       ApiThrottle.configure do |config|
         config.time_window = 3600
         config.requests_per_window = 100
-        config.min_time_bucket_size = 1
+        config.min_time_slot_size = 1
       end
     end
 
@@ -30,14 +30,14 @@ RSpec.describe ApiThrottleService::RateLimiter, type: :service do
 
     end
 
-    context 'config : time_window = 3600, requests_per_window = 100, min_time_bucket_size = 3600' do
+    context 'config : time_window = 3600, requests_per_window = 100, min_time_slot_size = 3600' do
       #calculated rate limit 100 request every 3600 seconds
       before(:each) do
         $redis.flushdb
         ApiThrottle.configure do |config|
           config.time_window = 3600
           config.requests_per_window = 100
-          config.min_time_bucket_size = 3600
+          config.min_time_slot_size = 3600
         end
       end
 
@@ -54,14 +54,14 @@ RSpec.describe ApiThrottleService::RateLimiter, type: :service do
 
     end
 
-    context 'config : time_window = 3600, requests_per_window = 7200, min_time_bucket_size = 1' do
+    context 'config : time_window = 3600, requests_per_window = 7200, min_time_slot_size = 1' do
       #calculated rate limit 2 requests every 1 second
       before(:each) do
         $redis.flushdb
         ApiThrottle.configure do |config|
           config.time_window = 3600
           config.requests_per_window = 7200
-          config.min_time_bucket_size = 1
+          config.min_time_slot_size = 1
         end
       end
 
@@ -78,14 +78,14 @@ RSpec.describe ApiThrottleService::RateLimiter, type: :service do
 
     end
 
-    context 'config : time_window = 3600, requests_per_window = 7200, min_time_bucket_size = 5' do
+    context 'config : time_window = 3600, requests_per_window = 7200, min_time_slot_size = 5' do
       #calculated rate limit 10 requests every 5 seconds
       before(:each) do
         $redis.flushdb
         ApiThrottle.configure do |config|
           config.time_window = 3600
           config.requests_per_window = 7200
-          config.min_time_bucket_size = 5
+          config.min_time_slot_size = 5
         end
       end
 
@@ -104,7 +104,7 @@ RSpec.describe ApiThrottleService::RateLimiter, type: :service do
 
     context 'when redis is down' do
       it 'should not error out and allow api call' do
-        expect($redis).to receive(:hgetall).and_raise(Redis::CannotConnectError)
+        expect($redis).to receive(:exists).and_raise(Redis::CannotConnectError)
         expect(Rails).to receive_message_chain(:logger,:info).with('redis server is down, allowing api call')
 
         rate_limiter_service = ApiThrottleService::RateLimiter.new('1.1.1.1','test_controller','test_action')

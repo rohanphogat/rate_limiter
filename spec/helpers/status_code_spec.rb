@@ -5,7 +5,7 @@ RSpec.describe StatusCode, type: :helper do
 
     it 'should return correct message for status code 200' do
       expect(StatusCode::SUCCESS).to eq(200)
-      expect(StatusCode.get_response_message(StatusCode::SUCCESS)).to eq('Success')
+      expect(StatusCode.get_response_message(StatusCode::SUCCESS)).to eq('ok')
     end
 
     it 'should return correct message with variable for status code 429' do

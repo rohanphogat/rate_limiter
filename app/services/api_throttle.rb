@@ -12,12 +12,12 @@ module ApiThrottle
   end
 
   class Configuration
-    attr_accessor :time_window, :requests_per_window, :min_time_bucket_size
+    attr_accessor :time_window, :requests_per_window, :min_time_slot_size
 
     def initialize
       @time_window = 3600
       @requests_per_window = 100
-      @min_time_bucket_size = 1
+      @min_time_slot_size = 1
     end
   end
 end
